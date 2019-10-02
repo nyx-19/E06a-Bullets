@@ -46,6 +46,7 @@ class Player(arcade.Sprite):
     def __init__(self):
         super().__init__("assets/narwhal.png", 0.5)
         (self.center_x, self.center_y) = STARTING_LOCATION
+        
 
 class Enemy(arcade.Sprite):
     def __init__(self, position):
@@ -87,13 +88,20 @@ class Window(arcade.Window):
 
     def update(self, delta_time):
         self.bullet_list.update()
+
         for e in self.enemy_list:
-            # check for collision
-            # for every bullet that hits, decrease the hp and then see if it dies
-            # increase the score
-            # e.kill() will remove the enemy sprite from the game
+
+            damage = arcade.check_for_collision_with_list(e, self.bullet_list) # check for collision
+            for d in damage:                            # for every bullet that hits, decrease the hp and then see if it dies
+                e.hp = e.hp - d.damage                  # increase the score
+                d.kill ()
+                if e.hp < 0:
+                    e.kill()
+                    self.score = self.score + KILL_SCORE
+                else:
+                    self.score = self.score + HIT_SCORE   # e.kill() will remove the enemy sprite from the game
             # the pass statement is a placeholder. Remove line 81 when you add your code
-            pass
+            
 
     def on_draw(self):
         arcade.start_render()
@@ -114,7 +122,7 @@ class Window(arcade.Window):
             y = self.player.center_y + 15
             bullet = Bullet((x,y),(0,10),BULLET_DAMAGE)
             self.bullet_list.append(bullet)     #fire a bullet
-                                                 #the pass statement is a placeholder. Remove line 97 when you add your code
+                  #the pass statement is a placeholder. Remove line 97 when you add your code
             
 
 def main():
